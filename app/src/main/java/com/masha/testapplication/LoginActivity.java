@@ -42,18 +42,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Id to identity READ_CONTACTS permission request.
      */
+    //идентификатор удостоверения личности
     private static final int REQUEST_READ_CONTACTS = 0;
 
     /**
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
      */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
+    // это имитация базы данных логинов и паролей
+    static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
+
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
+    //создаем AsyncTask для работы с сервером
     private UserLoginTask mAuthTask = null;
 
     // UI references.
@@ -66,6 +70,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        //здесь получаем с сервера "соль" в другом потоке
+
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -93,6 +100,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
+
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
@@ -191,12 +199,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
+        //тут проверяем логин на корректность
         return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
+        //тут проверяем пароль на корректность
         return password.length() > 4;
     }
 
@@ -306,45 +314,62 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
+            // TODO: получаем соль и пытаемся залогиниться на сервере
 
-            try {
+            ServerAPI s = new ServerAPI(mEmail, mPassword);
+            s.getAccess();
+
+          /*  try {
                 // Simulate network access.
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 return false;
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
+            //ищем в фиктивной базе данных наши логин и пароль
+            for (String credential : LoginActivity.DUMMY_CREDENTIALS) {
+                //разбивает строку на email и пароль
                 String[] pieces = credential.split(":");
+                //email сравниваем с введенным email
                 if (pieces[0].equals(mEmail)) {
                     // Account exists, return true if the password matches.
+                    //если есть такой email, то проверяем пароль и возвращаем true если совпал
                     return pieces[1].equals(mPassword);
                 }
             }
 
-            // TODO: register the new account here.
+            // TODO: совпадений не найдено, надо создать новый аккаунт*/
             return true;
         }
 
+        //метод AsyncTask, выполняется после работы с сервером
         @Override
         protected void onPostExecute(final Boolean success) {
+            //зануляем ссылку на текущий объект ???
             mAuthTask = null;
+            //перестаем показывать анимацию загрузки
             showProgress(false);
 
+
             if (success) {
+                //если все прошло успешно, то завершаем поток
                 finish();
             } else {
+                //выводим сообщение о неправильности пароля
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
+                //снова запрашивает пароль
                 mPasswordView.requestFocus();
             }
         }
 
         @Override
         protected void onCancelled() {
+            //завершение работы потока, без проверки
             mAuthTask = null;
             showProgress(false);
         }
     }
+
+
 }
 
