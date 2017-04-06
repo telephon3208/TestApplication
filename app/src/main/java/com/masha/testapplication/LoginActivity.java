@@ -181,10 +181,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-           // mAuthTask = new UserLoginTask(email, password);
-           // mAuthTask.execute((Void) null);
-            ServerAPI s = new ServerAPI(email, password);
-            s.getAccess();
+            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask.execute((Void) null);
+
         }
     }
 
@@ -300,29 +299,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             // TODO: получаем соль и пытаемся залогиниться на сервере
 
-            ServerAPI s = new ServerAPI(mEmail, mPassword);
+            ServerHelper s = new ServerHelper(mEmail, mPassword);
             s.getAccess();
 
-          /*  try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
 
-            //ищем в фиктивной базе данных наши логин и пароль
-            for (String credential : LoginActivity.DUMMY_CREDENTIALS) {
-                //разбивает строку на email и пароль
-                String[] pieces = credential.split(":");
-                //email сравниваем с введенным email
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    //если есть такой email, то проверяем пароль и возвращаем true если совпал
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: совпадений не найдено, надо создать новый аккаунт*/
             return true;
         }
 

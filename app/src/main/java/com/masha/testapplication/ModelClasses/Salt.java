@@ -3,7 +3,6 @@ package com.masha.testapplication.ModelClasses;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.masha.testapplication.ServerAPI;
 
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class Salt {
         this.data = data;
     }
 
-    public class Data {
+    /*public class Data {
 
         @SerializedName("salt")
         @Expose
@@ -46,7 +45,7 @@ public class Salt {
             this.salt = salt;
         }
 
-    }
+    }*/
 
     public class Error {
 
