@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -73,9 +74,15 @@ public class ServerHelper {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
 
-            String text = "sha-256(sha-256(123456)+" + salt + ")";
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("sha-256(sha-256(");
+            stringBuilder.append("123456");
+            stringBuilder.append(")+");
+            stringBuilder.append(salt);
+            stringBuilder.append(")");
+
             md.reset();
-            md.update(text.getBytes("UTF-8"));
+            md.update(stringBuilder.toString().getBytes("UTF-8"));
             byte[] digest = md.digest();
             String str = String.format("%0" + (digest.length*2) +
                     "X", new BigInteger(1, digest));
@@ -93,6 +100,10 @@ public class ServerHelper {
     //запрашиваю токен
     private int tokenCall(String digest) {
 
+        if (digest.isEmpty()) {
+            return 0;
+        }
+
         int code = 0;
 
         Credentials credentials = new Credentials();
@@ -100,18 +111,7 @@ public class ServerHelper {
         credentials.setUsername("test");
         credentials.setPassword(digest);
 
-        /*Credentials2 credentials = new Credentials2();
-        List<Object> grantType = new ArrayList<>();
-        grantType.add("password");
-        //grantType.add(digest);
-        credentials.setGrantType(grantType);
-        List<Object> username = new ArrayList<>();
-        username.add("test");
-        //username.add(login);
-        credentials.setUsername(username);
-        List<Object> password = new ArrayList<>();
-        password.add(digest);
-        credentials.setPassword(password);*/
+
 
         try {
             Call<MyToken> call = api.getToken(credentials);

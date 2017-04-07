@@ -209,9 +209,12 @@ public class LoginActivity extends AppCompatActivity {
                     finish();
                     // переходим к следующей активити
                     //Intent intent = new Intent(this, CreateVideoActivity.class);
+                    //обнуляем токен на всякий случай
+                    //access_token = "";
                     break;
                 case 400: //неправильный запрос, синтаксическая ошибка
-
+                    //Неверная структура массива передаваемых данных,
+                    // либо не верные идентификаторы кастомных полей
                     break;
                 case 401: //неверный логин или пароль
                     //выводим сообщение о неправильности пароля
