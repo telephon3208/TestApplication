@@ -6,39 +6,39 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Credentials {
+public class Credentials2 {
 
     @SerializedName("grant_type")
     @Expose
-    private String grantType;
+    private List<Object> grantType = null;
     @SerializedName("username")
     @Expose
-    private String username;
+    private List<Object> username = null;
     @SerializedName("password")
     @Expose
-    private String password;
+    private List<Object> password = null;
 
-    public String getGrantType() {
+    public List<Object> getGrantType() {
         return grantType;
     }
 
-    public void setGrantType(String grantType) {
+    public void setGrantType(List<Object> grantType) {
         this.grantType = grantType;
     }
 
-    public String getUsername() {
+    public List<Object> getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(List<Object> username) {
         this.username = username;
     }
 
-    public String getPassword() {
+    public List<Object> getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(List<Object> password) {
         this.password = password;
     }
 

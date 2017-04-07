@@ -1,15 +1,20 @@
 package com.masha.testapplication;
 
 
+import android.app.AlertDialog;
 import android.util.Log;
 
 import com.masha.testapplication.API.API;
 import com.masha.testapplication.ModelClasses.Credentials;
+import com.masha.testapplication.ModelClasses.Credentials2;
 import com.masha.testapplication.ModelClasses.Login;
-import com.masha.testapplication.ModelClasses.Salt2;
+import com.masha.testapplication.ModelClasses.Salt;
 import com.masha.testapplication.ModelClasses.MyToken;
 
+import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -21,13 +26,17 @@ public class ServerHelper {
     private String login, password;
     private API api;
 
+    private String access_token = "";
+
     ServerHelper(String login, String password) {
         this.login = login;
         this.password = password;
 
     }
 
-    public boolean getAccess() {
+    public int getAccess() {
+
+        int code = 0;
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.smiber.com/v4.005/")
@@ -39,39 +48,24 @@ public class ServerHelper {
 
         Login log = new Login();
         log.setLogin("test");
-        //log.setLogin(login);
 
         try {
             //отправляю запрос и получаю соль
-            Call<Salt2> call = api.getSalt(log);
-            Response<Salt2> res = call.execute();
-            Log.d("MyLogs", "res = " + res.raw());
-            Log.d("MyLogs", "res = " + res.raw().headers());
-            if (res.code() == 200) {
+            Call<Salt> call = api.getSalt(log);
+            Response<Salt> res = call.execute();
+            code = res.code();
+            if (code == 200) {
                 String salt = res.body().getData().getSalt();
                 Log.d("MyLogs", "соль = " + salt);
-                tokenCall(encrypt(salt));
+                code = tokenCall(encrypt(salt));
             }
 
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d("MyLogs", "соляная ошибка");
+            Log.d("MyLogs", "ошибка получения соли");
+
         }
-
-        return false;
-    }
-
-    //запрашиваю токен
-    private void tokenCall(String digest) {
-        Credentials credentials = new Credentials();
-        credentials.setGrantType("password");
-        credentials.setUsername("test");
-        credentials.setPassword(digest);
-
-        Call<MyToken> call = api.getToken(credentials);
-        Response<MyToken> res = call.execute();
-
+        return code;
     }
 
     //шифрую пароль
@@ -79,14 +73,15 @@ public class ServerHelper {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
 
-            StringBuilder text = new StringBuilder("sha-256(sha-256(123456)+");
-            text.append(salt);
-            text.append(")");
-            md.update(text.toString().getBytes("UTF-8"));
-
+            String text = "sha-256(sha-256(123456)+" + salt + ")";
+            md.reset();
+            md.update(text.getBytes("UTF-8"));
             byte[] digest = md.digest();
+            String str = String.format("%0" + (digest.length*2) +
+                    "X", new BigInteger(1, digest));
+            Log.d("MyLogs", "digest = " + str);
+            return str;
 
-            return digest.toString();
         } catch (Exception e) {
             Log.d("MyLogs", "ошибка шифрования пароля");
             e.printStackTrace();
@@ -95,7 +90,49 @@ public class ServerHelper {
 
     }
 
+    //запрашиваю токен
+    private int tokenCall(String digest) {
 
+        int code = 0;
+
+        Credentials credentials = new Credentials();
+        credentials.setGrantType("password");
+        credentials.setUsername("test");
+        credentials.setPassword(digest);
+
+        /*Credentials2 credentials = new Credentials2();
+        List<Object> grantType = new ArrayList<>();
+        grantType.add("password");
+        //grantType.add(digest);
+        credentials.setGrantType(grantType);
+        List<Object> username = new ArrayList<>();
+        username.add("test");
+        //username.add(login);
+        credentials.setUsername(username);
+        List<Object> password = new ArrayList<>();
+        password.add(digest);
+        credentials.setPassword(password);*/
+
+        try {
+            Call<MyToken> call = api.getToken(credentials);
+            Response<MyToken> res = call.execute();
+            code = res.code();
+            if (code == 200) {
+                access_token = res.body().getAccessToken();
+                Log.d("MyLogs", "токен = " + access_token);
+            }
+        } catch (Exception e) {
+            Log.d("MyLogs", "ошибка получения токена");
+        }
+        return code;
+
+    }
+
+
+
+    public String getAccess_token() {
+        return access_token;
+    }
 
 
 
