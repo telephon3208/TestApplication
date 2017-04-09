@@ -43,9 +43,9 @@ public class CreateVideoActivity extends AppCompatActivity implements View.OnCli
         recorder.setMaxDuration(0); // максимальная длительность записи
         recorder.setMaxFileSize(0); // максимальный размер файла
 
-        recorder.setOutputFile(путь); //задаем имя файла для записи
+        //recorder.setOutputFile(путь); //задаем имя файла для записи
 
-        recorder.setPreviewDisplay(Surface); //задать превью
+        //recorder.setPreviewDisplay(Surface); //задать превью
 
         recorder.start(); //включается превью и начинается запись
     }

@@ -191,17 +191,14 @@ public class LoginActivity extends AppCompatActivity {
         protected Integer doInBackground(Void... params) {
 
             ServerHelper s = new ServerHelper(mEmail, mPassword);
-            //Integer code = s.getAccess();
-            int code = 200; //TODO: убрать это безобразие
+            Integer code = s.getAccess();
             access_token = s.getAccessToken();
 
             return code;
         }
 
-        //метод AsyncTask, выполняется после работы с сервером
         @Override
         protected void onPostExecute(final Integer success) {
-            //зануляем ссылку на текущий объект ???
             mAuthTask = null;
             //перестаем показывать анимацию загрузки
             showProgress(false);
@@ -210,6 +207,7 @@ public class LoginActivity extends AppCompatActivity {
                 case 200:
                     //если все прошло успешно, то завершаем поток,
                     finish();
+
                     // переходим к следующей активити
                     startVideoActivity();
                     break;

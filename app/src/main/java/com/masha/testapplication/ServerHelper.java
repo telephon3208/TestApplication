@@ -1,20 +1,15 @@
 package com.masha.testapplication;
 
 
-import android.app.AlertDialog;
 import android.util.Log;
 
 import com.masha.testapplication.API.API;
-import com.masha.testapplication.ModelClasses.Credentials;
-import com.masha.testapplication.ModelClasses.Credentials2;
 import com.masha.testapplication.ModelClasses.Login;
 import com.masha.testapplication.ModelClasses.Salt;
 import com.masha.testapplication.ModelClasses.MyToken;
 
-import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.List;
+import java.security.NoSuchAlgorithmException;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -25,7 +20,7 @@ public class ServerHelper {
 
     private String login, password;
     private API api;
-
+    private String hashPassword;
     private String access_token = "";
 
     ServerHelper(String login, String password) {
@@ -57,7 +52,8 @@ public class ServerHelper {
             if (code == 200) {
                 String salt = res.body().getData().getSalt();
                 Log.d("MyLogs", "соль = " + salt);
-                code = tokenCall(encrypt(salt));
+                hashPassword = getHash(getHash("123456") + salt);
+                code = tokenCall(hashPassword);
             }
 
         } catch (Exception e) {
@@ -68,40 +64,13 @@ public class ServerHelper {
         return code;
     }
 
-    //шифрую пароль
-    private String encrypt(String salt) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-
-            String text = "sha-256(sha-256(123456)+" + salt + ")";
-            md.reset();
-            md.update(text.getBytes("UTF-8"));
-            byte[] digest = md.digest();
-            String str = String.format("%0" + (digest.length*2) +
-                    "X", new BigInteger(1, digest));
-            Log.d("MyLogs", "digest = " + str);
-            return str;
-
-        } catch (Exception e) {
-            Log.d("MyLogs", "ошибка шифрования пароля");
-            e.printStackTrace();
-            return null;
-        }
-
-    }
-
     //запрашиваю токен
     private int tokenCall(String digest) {
 
         int code = 0;
 
-        Credentials credentials = new Credentials();
-        credentials.setGrantType("password");
-        credentials.setUsername("test");
-        credentials.setPassword(digest);
-
         try {
-            Call<MyToken> call = api.getToken(credentials);
+            Call<MyToken> call = api.getToken("password", "test", digest);
             Response<MyToken> res = call.execute();
             code = res.code();
             if (code == 200) {
@@ -116,12 +85,34 @@ public class ServerHelper {
     }
 
 
-
     public String getAccessToken() {
         return access_token;
     }
 
+    private static String bytesToHexString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < bytes.length; i++) {
+            String hex = Integer.toHexString(0xFF & bytes[i]);
+            if (hex.length() == 1) {
+                sb.append('0');
+            }
+            sb.append(hex);
+        }
+        return sb.toString();
+    }
 
+    private String getHash(String password) {
+        String hash = null;
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+            digest.update(password.getBytes());
+            hash = bytesToHexString(digest.digest());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return hash;
+    }
 
 
 
