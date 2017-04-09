@@ -48,6 +48,8 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
 
+    private String access_token;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -178,7 +180,7 @@ public class LoginActivity extends AppCompatActivity {
 
         private final String mEmail;
         private final String mPassword;
-        private String access_token;
+
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -189,8 +191,9 @@ public class LoginActivity extends AppCompatActivity {
         protected Integer doInBackground(Void... params) {
 
             ServerHelper s = new ServerHelper(mEmail, mPassword);
-            Integer code = s.getAccess();
-            access_token = s.getAccess_token();
+            //Integer code = s.getAccess();
+            int code = 200; //TODO: убрать это безобразие
+            access_token = s.getAccessToken();
 
             return code;
         }
@@ -208,7 +211,7 @@ public class LoginActivity extends AppCompatActivity {
                     //если все прошло успешно, то завершаем поток,
                     finish();
                     // переходим к следующей активити
-                    //Intent intent = new Intent(this, CreateVideoActivity.class);
+                    startVideoActivity();
                     break;
                 case 400: //неправильный запрос, синтаксическая ошибка
 
@@ -248,6 +251,12 @@ public class LoginActivity extends AppCompatActivity {
                         });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    private void startVideoActivity() {
+        Intent intent = new Intent(this, CreateVideoActivity.class);
+        intent.putExtra("токен", access_token);
+        startActivity(intent);
     }
 
 

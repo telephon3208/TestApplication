@@ -13,4 +13,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="first_video">Записать первое видео</string>
+    <string name="second_video">Записать второе видео</string>
+    <string name="post">Опубликовать</string>
 </resources>

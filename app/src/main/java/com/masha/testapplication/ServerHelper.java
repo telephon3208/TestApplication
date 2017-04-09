@@ -100,19 +100,6 @@ public class ServerHelper {
         credentials.setUsername("test");
         credentials.setPassword(digest);
 
-        /*Credentials2 credentials = new Credentials2();
-        List<Object> grantType = new ArrayList<>();
-        grantType.add("password");
-        //grantType.add(digest);
-        credentials.setGrantType(grantType);
-        List<Object> username = new ArrayList<>();
-        username.add("test");
-        //username.add(login);
-        credentials.setUsername(username);
-        List<Object> password = new ArrayList<>();
-        password.add(digest);
-        credentials.setPassword(password);*/
-
         try {
             Call<MyToken> call = api.getToken(credentials);
             Response<MyToken> res = call.execute();
@@ -130,7 +117,7 @@ public class ServerHelper {
 
 
 
-    public String getAccess_token() {
+    public String getAccessToken() {
         return access_token;
     }
 
