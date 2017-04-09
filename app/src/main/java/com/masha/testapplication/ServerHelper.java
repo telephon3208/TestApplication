@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.masha.testapplication.API.API;
 import com.masha.testapplication.ModelClasses.Login;
-import com.masha.testapplication.ModelClasses.Salt;
+import com.masha.testapplication.ModelClasses.ResponseFromServer;
 import com.masha.testapplication.ModelClasses.MyToken;
 
 import java.security.MessageDigest;
@@ -46,8 +46,8 @@ public class ServerHelper {
 
         try {
             //отправляю запрос и получаю соль
-            Call<Salt> call = api.getSalt(log);
-            Response<Salt> res = call.execute();
+            Call<ResponseFromServer> call = api.getSalt(log);
+            Response<ResponseFromServer> res = call.execute();
             code = res.code();
             if (code == 200) {
                 String salt = res.body().getData().getSalt();

@@ -5,6 +5,7 @@ import com.masha.testapplication.ModelClasses.Salt;
 import com.masha.testapplication.ModelClasses.MyToken;
 
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -16,6 +17,8 @@ public interface API {
     @Headers("Content-Type: application/json")
     @POST("salt")
     Call<Salt> getSalt(@Body Login login);
+    //void getSalt(@Field("login") String log, Callback<Salt> callback);
+
 
     @FormUrlEncoded
     @Headers("Content-Type: application/x-www-form-urlencoded")
