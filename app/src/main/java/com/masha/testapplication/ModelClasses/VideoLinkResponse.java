@@ -12,7 +12,7 @@ public class VideoLinkResponse {
     private List<Object> errors = null;
     @SerializedName("data")
     @Expose
-    private Data data;
+    private LinkData data;
 
     public List<Object> getErrors() {
         return errors;
@@ -22,40 +22,15 @@ public class VideoLinkResponse {
         this.errors = errors;
     }
 
-    public Data getData() {
+    public LinkData getData() {
         return data;
     }
 
-    public void setData(Data data) {
+    public void setData(LinkData data) {
         this.data = data;
     }
 
-    private class Data {
 
-        @SerializedName("id")
-        @Expose
-        private String id;
-        @SerializedName("link")
-        @Expose
-        private String link;
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public String getLink() {
-            return link;
-        }
-
-        public void setLink(String link) {
-            this.link = link;
-        }
-
-    }
 }
 
 

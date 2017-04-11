@@ -9,21 +9,13 @@ import com.masha.testapplication.ModelClasses.ResponseFromServer;
 import com.masha.testapplication.ModelClasses.MyToken;
 import com.masha.testapplication.ModelClasses.VideoLinkResponse;
 
+
 import java.io.File;
-import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -168,26 +160,26 @@ public class ServerHelper {
     public int postFile(File file) {
         int code = 0;
 
-   //     Map<String,File> fileMap = new HashMap<>();
-   //     fileMap.put("file", file);
-
         //MediaType.parse() возвращает объект MediaType
         RequestBody requestFile =
                 RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        //MultipartBody.Part body =
-        //        MultipartBody.Part.createFormData("VIDEO", file.getName(), requestFile);
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("VIDEO", file.getName(), requestFile);
 
         String bearerToken = "Bearer " + access_token; //Bearer is authentication scheme
         RequestBody typeFile = RequestBody.create(
-                        MediaType.parse("text/plain"), "VIDEO");
+                        MediaType.parse("multipart/form-data"), "VIDEO");
 
-        Call<VideoLinkResponse> call = api.postVideo(bearerToken, requestFile, typeFile);
+        Call<ResponseBody> call = api.upload(bearerToken, body, typeFile);
         try {
-            retrofit2.Response<VideoLinkResponse> res = call.execute();
+            retrofit2.Response<ResponseBody> res = call.execute();
             if (res != null) {
-                code = res.code(); //
+                code = res.raw().code();
                 if (res.isSuccessful()) {
-                    Log.d("MyLogs", "link = ");
+                    if (res.body() != null) {
+                        Log.d("MyLogs", "link = " + res.raw().body());
+                    }
+                    Log.d("MyLogs", "link = " + res.raw().toString());
                 }
             }
 

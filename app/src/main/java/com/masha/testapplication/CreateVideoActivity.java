@@ -40,8 +40,8 @@ public class CreateVideoActivity extends AppCompatActivity implements View.OnCli
 
         createDirectory();
         // TODO: это строчка для отладки
-        //video = new File(directory.getPath() + "/" + "video_"
-        //        + 1 + ".mp4");
+        video = new File(directory.getPath() + "/" + "video_"
+                + 1 + ".mp4");
     }
 
     @Override

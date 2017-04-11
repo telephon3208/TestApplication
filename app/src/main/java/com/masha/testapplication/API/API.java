@@ -5,11 +5,9 @@ import com.masha.testapplication.ModelClasses.ResponseFromServer;
 import com.masha.testapplication.ModelClasses.MyToken;
 import com.masha.testapplication.ModelClasses.VideoLinkResponse;
 
-import java.io.File;
-import java.util.Map;
-
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -35,13 +33,19 @@ public interface API {
                            @Field("password") String password);
 
     @Multipart
-    @Headers("Content-Type: multipart/form-data") //без этого заголовка вылетает с ошибкой
+    //@Headers("Content-Type: multipart/form-data; charset=utf-8; boundary=\"---BOUNDARY---\"") //без этого заголовка вылетает с ошибкой
+    @Headers("Content-Type: multipart/form-data; boundary=\"---BOUNDARY---\"") //без этого заголовка вылетает с ошибкой
     @POST("file/upload")
     Call<VideoLinkResponse> postVideo(@Header("Authorization") String authorization,
                                       @Part ("file") RequestBody file,
                                     //  @PartMap Map<String,File> filesMap,
-                                      @Part("type_file") RequestBody typeFile);
-    //@Header("Authorization") String authorization,
-    //@Part("type_file") String typeFile
+                                       @Part("type_file") RequestBody typeFile);
+                                      //@Part("type_file") String typeFile);
+
+    @Multipart
+    @POST("file/upload")
+    Call<ResponseBody> upload(@Header("Authorization") String authorization,
+                              @Part MultipartBody.Part file,
+                              @Part("type_file") RequestBody typeFile);
 
 }
